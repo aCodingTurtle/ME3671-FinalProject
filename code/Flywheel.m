@@ -1,16 +1,17 @@
 %%Flywheel
 %Inputs
-Fly_r=1;    %in
-Fly_t2=50;  %seconds
-Fly_t1=0;   %seconds
-Fly_Tr=100; %lbf in
-Fly_T2=500; %lbf in
-Fly_ws=200; %rad/s
-Fly_wr=203; %rad/s
+Fly_k=68649.71932;  %Spring Constant k (N/m which is 392 lbs/in)
+Fly_x_1=0.5; %m (Not Actual Value)
+Fly_x_2=1; %m (Not Actual Value)
+Fly_w=6500*2*pi/60; %rad/s using 6500 RPM
+
+%Other Variables
+Fly_CoefSpeed=0.001:0.001:0.25; %Range of tested Coefficients
 
 %Equations
-Fly_a=-Fly_Tr/(Fly_ws-Fly_wr);
-Fly_m=((Fly_t2-Fly_t1)*Fly_a)/(Fly_r^2*log(Fly_T2/Fly_Tr))*12*32.174;
+Fly_Energy_1=0.5*Fly_k*Fly_x_1;
+Fly_Energy_2=0.5*Fly_k*Fly_x_2;
+Fly_Inertia=(Fly_Energy_2-Fly_Energy_1)./(Fly_CoefSpeed.*Fly_w^2);
 
 %Output
-Fly_m=Fly_m %lbm
+Fly_Inertia=Fly_Inertia %kg m^2
