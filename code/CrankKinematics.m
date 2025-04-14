@@ -36,6 +36,12 @@ T90 = circshift(T,90); % torque at 90 degree offset
 T180 = circshift(T,180); % torque at 180 degree offset
 T270 = circshift(T,270); % torque at 270 degree offset
 
+%adjusted offset for a 1 degree angular machining tolerance
+T89 = circshift(T,89); % torque at 89 degree offset
+T1 = circshift(T,1); %torque at 1 degree offset
+T181 = circshift(T,180);
+T269 = circshift(T90,180);
+
 %% Torque Profiles
 
 % Tp1 = 2 springs per crank offset, 2x180 degrees
@@ -43,6 +49,7 @@ Tp1 = 2*T + 2*T180;
 
 % Tp2 = 1 spring per crank offset, 4x90 degrees
 Tp2 = T + T90 + T180 + T270;
+Tp2Toleranced = T1 + T89 + T181 +T270;
 
 %% Graphs
 
@@ -74,12 +81,13 @@ hold on
 grid on
 %plot(crankAngle, Tp1, 'k-')
 plot(crankAngle, Tp2, 'r-')
+plot(crankAngle, Tp2Toleranced, 'k-')
 xlim([0 360])
 xticks(0:45:360)
 xlabel("Crank Angle (degrees)")
 ylabel("Torque (NM)")
-title("Spring Net Torque Profiles")
-legend("1 Spring Every 90 Degree")
+title("1 Spring Every 90 Degree")
+legend("0 degree crank tolerance","1 degree crank tolerance")
 
 figure
 hold on 

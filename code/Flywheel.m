@@ -14,4 +14,4 @@ Fly_Energy_2=0.5*Fly_k*Fly_x_2;
 Fly_Inertia=(Fly_Energy_2-Fly_Energy_1)./(Fly_CoefSpeed.*Fly_w^2);
 
 %Output
-Fly_Inertia=Fly_Inertia %kg m^2
+Fly_Inertia=Fly_Inertia; %kg m^2
