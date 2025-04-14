@@ -16,9 +16,11 @@ Fcr = Fs./cosd(phi); % Force through Connecting Rod
 Fwall = Fcr.*sind(phi); % Reaction force on wall from cylinder cap
 
 alpha = 180 - crankAngle - phi;
-beta = 90 - alpha;
+beta = abs(90-alpha);
 
 T = crankR.*Fcr.*cosd(beta); % Torque required by shaft
+
+ts = cosd(beta);
 
 %% Angle Offsets
 Fs90 = circshift(Fs,90); % 90 degree offset spring force
@@ -58,23 +60,26 @@ title("Forces every Crank Revolution")
 legend("Spring","Connecting Rod", "Wall","Location","best")
 
 figure
+hold on
 grid on
 plot(crankAngle,phi, 'b-')
+plot(crankAngle,ts, 'r-')
 xlim([0 360])
 xticks(0:45:360)
 title("Connecting Rod - Piston Angle")
 
+
 figure
 hold on 
 grid on
-plot(crankAngle, Tp1, 'k-')
+%plot(crankAngle, Tp1, 'k-')
 plot(crankAngle, Tp2, 'r-')
 xlim([0 360])
 xticks(0:45:360)
 xlabel("Crank Angle (degrees)")
 ylabel("Torque (NM)")
 title("Spring Net Torque Profiles")
-legend("2 Springs Every 180 Degree", "1 Spring Every 90 Degree")
+legend("1 Spring Every 90 Degree")
 
 figure
 hold on 
