@@ -37,10 +37,10 @@ T180 = circshift(T,180); % torque at 180 degree offset
 T270 = circshift(T,270); % torque at 270 degree offset
 
 %adjusted offset for a 1 degree angular machining tolerance
-T89 = circshift(T,89); % torque at 89 degree offset
-T1 = circshift(T,1); %torque at 1 degree offset
-T181 = circshift(T,180);
-T269 = circshift(T90,180);
+T89 = circshift(T,89);  % torque at 89 degree offset
+T1 = circshift(T,1);    % torque at 1 degree offset
+T181 = circshift(T1,180);
+T269 = circshift(T89,180);
 
 %% Torque Profiles
 
@@ -49,7 +49,15 @@ Tp1 = 2*T + 2*T180;
 
 % Tp2 = 1 spring per crank offset, 4x90 degrees
 Tp2 = T + T90 + T180 + T270;
-Tp2Toleranced = T1 + T89 + T181 +T270;
+Tp2Toleranced = T1 + T89 + T181 +T269;
+
+% Tp3 = 1 spring per crank offset, one broken spring
+Tp3 = T + T90 + T180;
+Tp3Toleranced = T1 + T89 + T181;
+
+% Tp4 = 1 spring per crank offset, two broken springs
+Tp4 = T + T90;
+Tp4Toleranced = T1 + T89;
 
 %% Graphs
 
