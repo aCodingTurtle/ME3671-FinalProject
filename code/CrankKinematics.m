@@ -39,8 +39,8 @@ T270 = circshift(T,270); % torque at 270 degree offset
 %adjusted offset for a 1 degree angular machining tolerance
 T89 = circshift(T,89); % torque at 89 degree offset
 T1 = circshift(T,1); %torque at 1 degree offset
-T181 = circshift(T,180);
-T269 = circshift(T90,180);
+T181 = circshift(T1,180);
+T269 = circshift(T89,180);
 
 %% Torque Profiles
 
