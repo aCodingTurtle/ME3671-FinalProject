@@ -12,103 +12,157 @@ phi = asind(crankR*sind(crankAngle)/rodL);
 disp = crankR*cosd(crankAngle) + rodL*cosd(phi) - TDCdist;
 
 Fs = spring.K * (disp + spring.Xpre); % Spring Force
-Fcr = Fs./cosd(phi); % Force through Connecting Rod
+
+Fcr = Fs./cosd(phi); % Force through Connecting Rod (and all bearings)
 Fwall = Fcr.*sind(phi); % Reaction force on wall from cylinder cap
 
 alpha = 180 - crankAngle - phi;
 beta = abs(90-alpha);
 
 T = crankR.*Fcr.*cosd(beta); % Torque required by shaft
+pctCRtoTorque = cosd(beta);  % Percent Connecting Rod Force converted to Torque
 
-ts = cosd(beta);
+% % Alternate Method (converting to X and Y axes)
+% Bx = Fs;
+% By = Bx .* tand(phi); % Same as Fwall
+% Bmag = sqrt(Bx.^2 + By.^2); % Same as Fcr
+% T = crankR.*(Bx.*sind(crankAngle) + By.*cosd(crankAngle)); % Same as T
 
 %% Angle Offsets
 Fs90 = circshift(Fs,90); % 90 degree offset spring force
-Fcr90 = circshift(Fcr,90); % 90 degree offset crank shaft force
-
 Fs180 = circshift(Fs,180); % 180 degree offset spring force
-Fcr180 = circshift(Fcr,180); % 180 degree offset crank shaft force
-
 Fs270 = circshift(Fs,270); % 270 degree offset spring force
+
+Fcr90 = circshift(Fcr,90); % 90 degree offset crank shaft force
+Fcr180 = circshift(Fcr,180); % 180 degree offset crank shaft force
 Fcr270 = circshift(Fcr,270); % 270 degree offset crank shaft force
 
 T90 = circshift(T,90); % torque at 90 degree offset
 T180 = circshift(T,180); % torque at 180 degree offset
 T270 = circshift(T,270); % torque at 270 degree offset
 
-%adjusted offset for a 1 degree angular machining tolerance
+% Adjusted offset for a 1 degree angular machining tolerance
 T89 = circshift(T,89);  % torque at 89 degree offset
 T1 = circshift(T,1);    % torque at 1 degree offset
 T181 = circshift(T1,180);
 T269 = circshift(T89,180);
 
 %% Torque Profiles
+% TorqueProfile (+1deg Tolerance) _ Springs x Offset Angle
 
-% Tp1 = 2 springs per crank offset, 2x180 degrees
-Tp1 = 2*T + 2*T180;
+% TP_4x180 = 2 springs per crank offset, 4x180 degrees
+TP_4x180 = 2*T + 2*T180;
+TPT_4x180 = 2*T1 + 2*T181;
+Tmax_4x180 = max(TP_4x180);
+TmaxT_4x180 = max(TPT_4x180);
 
-% Tp2 = 1 spring per crank offset, 4x90 degrees
-Tp2 = T + T90 + T180 + T270;
-Tp2Toleranced = T1 + T89 + T181 +T269;
+% TP_4x90 = 1 spring per crank offset, 4x90 degrees
+TP_4x90 = T + T90 + T180 + T270;
+TPT_4x90 = T1 + T89 + T181 +T269;
+Tmax_4x90 = max(TP_4x90);
+TmaxT_4x90 = max(TPT_4x90);
 
-% Tp3 = 1 spring per crank offset, one broken spring
-Tp3 = T + T90 + T180;
-Tp3Toleranced = T1 + T89 + T181;
+% TP_3x90 = 1 spring per crank offset, one broken spring
+TP_3x90 = T + T90 + T180;
+TPT_3x90 = T1 + T89 + T181;
+Tmax_3x90 = max(TP_3x90);
+TmaxT_3x90 = max(TPT_3x90);
 
-% Tp4 = 1 spring per crank offset, two broken springs
-Tp4 = T + T90;
-Tp4Toleranced = T1 + T89;
+% TP_2x90 = 1 spring per crank offset, two broken springs
+TP_2x90 = T + T90;
+TPT_2x90 = T1 + T89;
+Tmax_2x90 = max(TP_2x90);
+TmaxT_2x90 = max(TPT_2x90);
 
-%% Graphs
+% TP_1x90 = 1 spring per crank offset, two broken springs
+TP_1x90 = T;
+TPT_1x90 = T1;
+Tmax_1x90 = max(TP_1x90);
+TmaxT_1x90 = max(TPT_1x90);
 
+
+%% Plots
+
+% Forces (Spring, Connecting Rod, Wall, Radial)
 figure
 hold on 
 grid on
 plot(crankAngle, Fs, 'k-')
 plot(crankAngle, Fcr, 'b-')
 plot(crankAngle, Fwall, 'r-')
+plot(crankAngle, Fradial, 'c-')
 xlim([0 360])
 xticks(0:45:360)
 xlabel("Crank Angle (degrees)")
 ylabel("Force (N)")
 title("Forces every Crank Revolution")
-legend("Spring","Connecting Rod", "Wall","Location","best")
+legend("Spring","Connecting Rod", "Wall","Radial","Location","best")
 
+% Angle (Connecting Rod to Piston)
 figure
 hold on
 grid on
 plot(crankAngle,phi, 'b-')
-plot(crankAngle,ts, 'r-')
+plot(crankAngle,pctCRtoTorque, 'r-')
 xlim([0 360])
 xticks(0:45:360)
 title("Connecting Rod - Piston Angle")
+legend("\phi Rod-Piston Angle", "% Rod Force converted to Torque")
 
-
+% Camshaft Geometry Torque Profiles
 figure
 hold on 
 grid on
-%plot(crankAngle, Tp1, 'k-')
-plot(crankAngle, Tp2, 'r-')
-plot(crankAngle, Tp2Toleranced, 'k-')
+plot(crankAngle, TP_4x180, 'r-', crankAngle, TPT_4x180, 'r--')
+plot(crankAngle, TP_4x90, 'b-', crankAngle, TPT_4x90, 'b--')
 xlim([0 360])
 xticks(0:45:360)
 xlabel("Crank Angle (degrees)")
 ylabel("Torque (NM)")
-title("1 Spring Every 90 Degree")
-legend("0 degree crank tolerance","1 degree crank tolerance")
+title("Crank Geometry Torque Profiles")
+legend("Springs every 180{\pm}0{\circ}", ...
+    "Springs every 180{\pm}1{\circ}", ...
+    "Springs every 90{\pm}0{\circ}", ...
+    "Springs every 90{\pm}1{\circ}")
 
+% Torque Profiles - 90deg Offsets, Broken Springs
 figure
-hold on 
-grid on
-plot(crankAngle, T)
-plot(crankAngle, T90)
-plot(crankAngle, T180)
-plot(crankAngle, T270)
+
+TPlayout = tiledlayout(2,2);
+title(TPlayout,"Torque Profiles")
+
+nexttile
+plot(crankAngle, TP_4x90, 'b-', crankAngle, TPT_4x90, 'r-')
 xlim([0 360])
 xticks(0:45:360)
 xlabel("Crank Angle (degrees)")
 ylabel("Torque (NM)")
-title("Torque Offsets")
-legend("0 Offset", "90 Offset","180 Offset","270 Offset")
+title("4 Springs, 1 Every 90 Degrees")
+legend("90{\pm}0{\circ}","90{\pm}1{\circ}")
 
+nexttile
+plot(crankAngle, TP_3x90, 'b-', crankAngle, TPT_3x90, 'r-')
+xlim([0 360])
+xticks(0:45:360)
+xlabel("Crank Angle (degrees)")
+ylabel("Torque (NM)")
+title("3 Springs/1 Broken, 1 Every 90 Degrees")
+legend("90{\pm}0{\circ}","90{\pm}1{\circ}","Location","best")
 
+nexttile
+plot(crankAngle, TP_2x90, 'b-', crankAngle, TPT_2x90, 'r-')
+xlim([0 360])
+xticks(0:45:360)
+xlabel("Crank Angle (degrees)")
+ylabel("Torque (NM)")
+title("2 Springs/2 Broken, 1 Every 90 Degrees")
+legend("90{\pm}0{\circ}","90{\pm}1{\circ}")
+
+nexttile
+plot(crankAngle, TP_1x90, 'b-', crankAngle, TPT_1x90, 'r-')
+xlim([0 360])
+xticks(0:45:360)
+xlabel("Crank Angle (degrees)")
+ylabel("Torque (NM)")
+title("1 Spring/3 Broken, 1 Every 90 Degrees")
+legend("90{\pm}0{\circ}","90{\pm}1{\circ}")
