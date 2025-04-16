@@ -1,0 +1,38 @@
+function sigma = BendingFatigue(T,M,Np,b,Dp,Dg)
+
+% T in Nm
+% M in SI units
+% b in mm
+% Dp and Dg in M
+
+F = b/25.4;   %converting mm to in
+Wt = (2*T)/Dp;
+V = (Dp/2)*3600;   %Pitch line Velocity
+% Kv = (6.1+V)/6.1;   %based on a cut/milled profile
+Ks = 1;   %normal Gear size
+
+Cmc = 0.8;   %crowned teeth
+Cpf = (F/(10*Dp))-.0375+(.0125*F);
+Ce = 1;
+Cpm = 1;   % SI/s < 0.175
+A = 0.127;
+B = .0158;
+C = -.93*10^(-4);
+Cma = A+(B*F)+(C*F^2);
+
+Kh = 1+Cmc*((Cpf*Cpm)+(Cma*Ce));
+
+Kb = 1;   % Solid Gear
+Kf = 1;
+Yj = GeometryFactor(Dg,Dp,Kf,M,Np);
+K = [1:0.25:2.25];
+
+for i = 1:6
+    Ko = K(i);
+    for k = 5:11
+    Qv = k;
+    Kv = BendingDF(Qv,V);
+    sigma = Wt*Ko*Kv*Ks*(1/(b*M))*((Kh*Kb)/Yj);
+    end
+end
+end
