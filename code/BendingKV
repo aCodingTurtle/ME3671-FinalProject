@@ -1,0 +1,6 @@
+function Kv = BendingDF(Qv,V)
+
+B = 0.25*(12-Qv)^(2/3);
+A = 50+56*(1-B);
+Kv = ((A+sqrt(200*V))/A)^B;
+end
