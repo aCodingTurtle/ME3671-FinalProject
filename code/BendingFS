@@ -1,0 +1,14 @@
+function Sf = BendingFS(sigma,St,L)
+
+if L < 1*10^7
+    Yn = 6.1514*L^(-0.1192);
+elseif L >= 1*10^7
+    Yn = 1.3558*L^(-0.0178);
+end
+
+Yt = 1;   %T<250 deg. F
+Y = [.85,1,1.25,1.5];
+for i = 1:4
+    Yz = Y(i);
+Sf = (St*Yn)/(sigma*Yt*Yz);
+end
