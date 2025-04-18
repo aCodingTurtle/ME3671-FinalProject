@@ -1,0 +1,45 @@
+clc;
+clear;
+
+%20 degree pressure angle
+%1rpm = 0.10472 rad/s
+Wi = 3600;   %rpm
+Wo = 5500:1:6000; %rpm
+To = 12.083; %Nm
+
+e = Wo/Wi;   %Gear ratio
+M = 1./e;   %SI Module
+phi = 20;   %degrees
+k = ones(size(M));   %full depth gears
+
+
+Kw = To*Wo;   %Kw motor needed
+
+x1 = 1:length(e);
+x2 = 1:length(M);
+
+figure(1)
+yyaxis left
+plot(x1,e,'r.')
+xlabel('Cost')
+ylabel('Gear Ratio')
+yyaxis right
+plot(x1,M,'b.')
+ylabel('Module')
+
+Np = ((2*k)/((1+2.*M)*sin(phi)^2)).*(M+sqrt(M.^2+(1+2*M)*sin(phi)^2));   % Pinion teeth
+Ng = M.*Np;   % Gear teeth
+Ng1 = (Np.^2*sin(phi)^2-4.*k.^2)./(4.*k-2.*Np.*sin(phi)^2);   % Gear teeth with no interference
+
+%Plotting the many data points for bending
+
+b = 1.25*M;   %Face width mm
+Dp = M.*Np;   %Pinion diameter M
+Dg = M.*Ng;   %Gear diameter M
+V = (Dg./2)*3600;   %Pitch line velocity SI
+L = [1*10^3:5*10^3:1*10^9];   %Lifecycle vector
+% St = ;
+% 
+% 
+sigma = BendingFatigue(To,M,Np,b,Dp,Dg);
+% Sf = BendingFS(sigma,St,L);
