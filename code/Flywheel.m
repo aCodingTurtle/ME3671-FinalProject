@@ -71,6 +71,8 @@ for i = 1:length(d_i)
                 m(i,j,k,h) = (1/4*pi*b(k)*(d_o(j)^2-d_i(i)^2))*p(h);
                 if m(i,j,k,h) < 0
                     m(i,j,k,h) = 0; %remove from design space
+                    I(i,j,k,h) = 0;
+                    Fly_CoefSpeed(i,j,k,h) = 0;
                 else
                     I(i,j,k,h) = 1/8*m(i,j,k,h)*(d_o(j)^2-d_i(i)^2);
                     Fly_CoefSpeed(i,j,k,h) = (Fly_E_1-Fly_E_2)./(I(i,j,k,h)*Fly_w^2);
@@ -80,9 +82,19 @@ for i = 1:length(d_i)
     end
 end
 
-
-%scatter(Fly_CoefSpeed,m)
-
-
+figure
+grid on
+hold on
+for k = 1:length(b)
+    for h = 1:length(p)
+        scatter(m(:,:,k,h),Fly_CoefSpeed(:,:,k,h),'k')
+    end
+end
+xlabel('m')
+ylabel('Cs')
+title("Coefficient of Speed against Mass")
+xlim([0 600])
+ylim([0 4*10^-6])
+hold off
 
 
