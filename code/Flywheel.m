@@ -32,33 +32,33 @@ Fly_E_2 = min(cumtrapz(Fly_T_2));
 
 %% design space
 
-p = [2.78 2.68 2.7 2.83 2.81 7.87 7.85 7.86 7.83];
-
+p = [2.780 2.680 2.700 2.830 2.810 7.870 7.850 7.860 7.830];
+p = p*1000;
 %densities (g/cm^2)
 
-d_i = 1:1:24;
-d_o = 2:1:25;
-b = 1:1:5;
+d_i = .01:.01:.49;
+d_o = .02:.01:.5;
+b = .001:.001:.5;
 
-A_1 = 1/4*pi*d_i.^2;
-A_2 = 1/4*pi*d_o.^2;
+% d_i = 1:1:29;
+% d_o = 2:1:30;
+% b = .1:.1:1;
 
 MinMagnitude = 1000; %initial value to compare against
-MinMagIndex = 0; %index the position of MinMagnitude for reference
-CsMin = 1*10^-5; %set minimum Cs value
+CsMin = .2; %set minimum Cs value
 
 for i = 1:length(d_i)
     for j = 1:length(d_o)
         for k = 1:length(b)
             for h = 1:length(p)
-                m(i,j,k,h) = (1/4*pi*b(k)*(d_o(j)^2-d_i(i)^2))*p(h);
-                if m(i,j,k,h) < 0
+                m(i,j,k,h) = (.25*pi*b(k)*(d_o(j)^2-d_i(i)^2))*p(h);
+                if m(i,j,k,h) <= 0
                     m(i,j,k,h) = 0; %remove from design space
                     I(i,j,k,h) = 0;
                     Fly_CoefSpeed(i,j,k,h) = 0;
                 else
-                    I(i,j,k,h) = 1/8*m(i,j,k,h)*(d_o(j)^2-d_i(i)^2);
-                    Fly_CoefSpeed(i,j,k,h) = (Fly_E_1-Fly_E_2)./(I(i,j,k,h)*Fly_w^2);
+                    I(i,j,k,h) = .5*m(i,j,k,h)*((.5*d_o(j))^2-(.5*d_i(i))^2);
+                    Fly_CoefSpeed(i,j,k,h) = (Fly_E_1-Fly_E_2)/(I(i,j,k,h)*Fly_w^2);
                     Magnitude(i,j,k,h) = sqrt(Fly_CoefSpeed(i,j,k,h)^2+m(i,j,k,h)^2); %calculate magnitude to find optimum trade off of mass and coefficient of speed
                     if Fly_CoefSpeed(i,j,k,h) < CsMin && Magnitude(i,j,k,h) < MinMagnitude 
                         MinMagnitude = Magnitude(i,j,k,h);
@@ -74,7 +74,6 @@ for i = 1:length(d_i)
 end
 
 
-
 figure
 grid on
 hold on
@@ -86,8 +85,8 @@ end
 xlabel('m')
 ylabel('Cs')
 title("Coefficient of Speed against Mass")
-xlim([0 1000])
-ylim([0 4*10^-5])
+%xlim([0 1])
+ylim([0 1])
 hold off
 
 
