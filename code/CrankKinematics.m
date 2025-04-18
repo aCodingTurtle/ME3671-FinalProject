@@ -26,7 +26,7 @@ pctCRtoTorque = cosd(beta);  % Percent Connecting Rod Force converted to Torque
 % Bx = Fs;
 % By = Bx .* tand(phi); % Same as Fwall
 % Bmag = sqrt(Bx.^2 + By.^2); % Same as Fcr
-% T = crankR.*(Bx.*sind(crankAngle) + By.*cosd(crankAngle)); % Same as T
+% TT = crankR.*(Bx.*sind(crankAngle) + By.*cosd(crankAngle)); % Same as T
 
 %% Angle Offsets
 Fs90 = circshift(Fs,90); % 90 degree offset spring force
@@ -90,13 +90,12 @@ grid on
 plot(crankAngle, Fs, 'k-')
 plot(crankAngle, Fcr, 'b-')
 plot(crankAngle, Fwall, 'r-')
-plot(crankAngle, Fradial, 'c-')
 xlim([0 360])
 xticks(0:45:360)
 xlabel("Crank Angle (degrees)")
 ylabel("Force (N)")
 title("Forces every Crank Revolution")
-legend("Spring","Connecting Rod", "Wall","Radial","Location","best")
+legend("Spring","Connecting Rod", "Wall","Location","best")
 
 % Angle (Connecting Rod to Piston)
 figure
