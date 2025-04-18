@@ -1,3 +1,5 @@
+function [TP_2x90] = CrankKinematics
+
 %% Crank Kinematics
 clear; clc; close all;
 
@@ -91,13 +93,12 @@ grid on
 plot(crankAngle, Fs, 'k-')
 plot(crankAngle, Fcr, 'b-')
 plot(crankAngle, Fwall, 'r-')
-plot(crankAngle, Fradial, 'c-')
 xlim([0 360])
 xticks(0:45:360)
 xlabel("Crank Angle (degrees)")
 ylabel("Force (N)")
 title("Forces every Crank Revolution")
-legend("Spring","Connecting Rod", "Wall","Radial","Location","best")
+legend("Spring","Connecting Rod", "Wall")
 
 % Angle (Connecting Rod to Piston)
 figure
