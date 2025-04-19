@@ -8,6 +8,8 @@ Fly_k = 68649.71932;  %Spring Constant k (N/m which is 392 lbs/in)
 Fly_w = 5525*2*pi/60; %rad/s using 5525 RPM
 [TP_Worst,TP_Avg] = CrankKinematics;
 
+close all
+
 %% torque energy balance
 
 %worst case scenario, 2 springs breaking
@@ -95,25 +97,25 @@ end
 d_shaft = .1; %shaft diameter plus flywheel base
 
 %set design space
-w = .005:.005:.5; %width
+w = .001:.001:.05; %width
 d = .005:.005:b(MinMagPosition(3)); %depth
-N_Spokes = 1:1:10; %number of spoker
+N_Spokes = 3:1:10; %number of spokes
 
 %set requirements
 n_bending_min = 2; %minimum allowable failure in bending factor of safety
 n_sheer_min = 2; %minimum allowable failure in sheer factor of safety
 MinMagnitude = 1000000; %initial value to compare against
 
-for i = length(w)
-    for j = length(d)
-        for k = length(N_Spokes)
-            m_spoke(i,j,k) = p(MinMagnitude(5))*w(i)*d(j);
-            m_spokes(i,j,k) = m_spoke*N_Spokes(k);
-            n_bending(i,j,k) = Sy(MinMagPosition(4))/((max(TP_Worst)/(.5*d_i(MinMagPosition(1)))/N_Spokes(k))/(M_Spoke(i,j,k)/12*(w(i)^2+d(j)^2)));
-            n_shear(i,j,k) = Sy(MinMagPosition(4))/sqrt(3*(3*max(TP_Worst)/N_Spokes/(2*w*d))^2);
+for i = 1:length(w)
+    for j = 1:length(d)
+        for k = 1:length(N_Spokes)
+            m_spoke(i,j,k) = p(MinMagPosition(4))*w(i)*d(j);
+            m_spokes(i,j,k) = m_spoke(i,j,k)*N_Spokes(k);
+            n_bending(i,j,k) = Sy(MinMagPosition(4))/((max(TP_Worst)/(.5*d_i(MinMagPosition(1)))/N_Spokes(k))/(m_spoke(i,j,k)/12*(w(i)^2+d(j)^2)));
+            n_shear(i,j,k) = Sy(MinMagPosition(4))/sqrt(3*(3*max(TP_Worst)/N_Spokes(k)/(2*w(i)*d(j)))^2);
             Magnitude2(i,j,k) = sqrt(m_spokes(i,j,k)^2+n_bending(i,j,k)^2+n_shear(i,j,k)^2);
-            if n_bending(i,j,k) < n_bending_min && n_shear(i,j,k) < n_sheer_min && Magnitude2(i,j,k) < MinMagnitude 
-                    MinMagnitude = Magnitude(i,j,k,h);
+            if n_bending(i,j,k) >= n_bending_min && n_shear(i,j,k) >= n_sheer_min && Magnitude2(i,j,k) < MinMagnitude 
+                    MinMagnitude = Magnitude(i,j,k);
                     MinMagPosition2(1) = i;
                     MinMagPosition2(2) = j;
                     MinMagPosition2(3) = k;
@@ -145,4 +147,32 @@ Fly_CS_Avg = (Fly_E_1_Avg-Fly_E_2_Avg)/(I(MinMagPosition(1),MinMagPosition(2),Mi
 % ylim([0 1])
 % hold off
 
+%Flywheel spokes design space
 
+figure
+
+subplot(1,2,1)
+grid on
+hold on
+for k = 1:length(N_Spokes)
+    scatter(m_spokes(:,:,k),n_bending(:,:,k),'k')
+end
+xlabel('m')
+ylabel('n_bending')
+title("Factor of Safety in Bending against Spoke Mass")
+%xlim([0 1])
+ylim([0 10^3])
+hold off
+
+subplot(1,2,2)
+grid on
+hold on
+for k = 1:length(N_Spokes)
+    scatter(m_spokes(:,:,k),n_shear(:,:,k),'k')
+end
+xlabel('m')
+ylabel('n_bending')
+title("Factor of Safety in Shear against Spoke Mass")
+%xlim([0 1])
+ylim([0 10^3])
+hold off
