@@ -1,8 +1,15 @@
 %% This script regards calculations for shaft forces
 
 %% Knowns
+
 g = 9.81;               % Gravity
 
+% Shaft Group
+% 4340 hot rolled steel Specs Table A-22
+S_y = 910;              % Yeild Strength (MPa)
+S_u = 1041;             % Ultimate Strength (MPa)
+
+% Other Groups
 D_dg = 0;               % Drive Gear Diameter
 D_pg = 0;               % Driven Gear Diameter
 F_gc = 0;               % Gear Contact Force
@@ -32,7 +39,7 @@ F_b3 = (F_pg+F_fw) / 2; % Bearing force (N)
 F_b4 = F_fw / 2;        % Bearing force (N)
 T_pg = 0;               % Pinion gear torque (N*m)
 T_fw = 0;               % Flywheel torque (N*m)
-T_cp = 0;               % Coupling torque (N*m)
+T_cp = 12;              % Max Coupling torque (N*m)
 
 
 
