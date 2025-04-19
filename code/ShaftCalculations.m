@@ -9,6 +9,8 @@ g = 9.81;               % Gravity
 S_y = 910;              % Yeild Strength (MPa)
 S_u = 1041;             % Ultimate Strength (MPa)
 
+n = 1.25;               % Factor of Safety
+
 % Other Groups
 D_dg = 0;               % Drive Gear Diameter
 D_pg = 0;               % Driven Gear Diameter
@@ -29,6 +31,7 @@ T_m = 0;                % Motor torque (N*m)
 T_dg = 0;               % Drive gear torque on shaft (N*m)
 
 
+tao_max = S_y / (2*n);  % Max shear stress(check Ex 5-76)
 
 
 %% Shaft 2 (Driven gear, flywheel, coupling to crankshaft)
