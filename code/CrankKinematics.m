@@ -1,4 +1,4 @@
-function [TP_2x90] = CrankKinematics
+function [TP_2x90,TPT_4x90] = CrankKinematics
 
 %% Crank Kinematics
 clear; clc; close all;
