@@ -94,12 +94,14 @@ for i = 1:length(d_i)
 end
 
 %% Spoke Optimization
-d_shaft = .1; %shaft diameter plus flywheel base
 
 %set design space
-w = .001:.001:.05; %width
+d_shaft = .02; %placeholder value until we talk to dom
+d_hub = .02+d_shaft; %shaft diameter plus flywheel base
+
+w = .005:.001:.05; %width
 d = .005:.005:b(MinMagPosition(3)); %depth
-N_Spokes = 3:1:10; %number of spokes
+N_Spokes = 4:2:10; %number of spokes
 
 %set requirements
 n_bending_min = 2; %minimum allowable failure in bending factor of safety
@@ -109,7 +111,7 @@ MinMagnitude = 1000000; %initial value to compare against
 for i = 1:length(w)
     for j = 1:length(d)
         for k = 1:length(N_Spokes)
-            m_spoke(i,j,k) = p(MinMagPosition(4))*w(i)*d(j);
+            m_spoke(i,j,k) = p(MinMagPosition(4))*w(i)*d(j)*(d_i(MinMagPosition(1))-d_hub);
             m_spokes(i,j,k) = m_spoke(i,j,k)*N_Spokes(k);
             n_bending(i,j,k) = Sy(MinMagPosition(4))/((max(TP_Worst)/(.5*d_i(MinMagPosition(1)))/N_Spokes(k))/(m_spoke(i,j,k)/12*(w(i)^2+d(j)^2)));
             n_shear(i,j,k) = Sy(MinMagPosition(4))/sqrt(3*(3*max(TP_Worst)/N_Spokes(k)/(2*w(i)*d(j)))^2);
@@ -126,7 +128,19 @@ end
 
 
 %% Final Calculations
-Fly_CS_Avg = (Fly_E_1_Avg-Fly_E_2_Avg)/(I(MinMagPosition(1),MinMagPosition(2),MinMagPosition(3),MinMagPosition(4))*Fly_w^2);
+m_hub = pi*d(MinMagPosition2(2))*((.5*d_hub)^2-(.5*d_shaft));
+
+m_final = m(MinMagPosition(1),MinMagPosition(2),MinMagPosition(3),MinMagPosition(4))+m_spokes(MinMagPosition2(1),MinMagPosition2(2),MinMagPosition2(3))+m_hub %final mass of the donut, hub, and spokes
+I_Final = I(MinMagPosition(1),MinMagPosition(2),MinMagPosition(3),MinMagPosition(4))+.5*m_hub*((.5*d_hub)^2+(.5*d_shaft)^2)+(w(MinMagPosition2(1))*d_i(MinMagPosition(1))^3)/12-(w(MinMagPosition2(1))*d_hub^3)/12; %final moment of inertia for fonut, hub, and spokes
+
+CS_Worst_Final = (Fly_E_1_Worst-Fly_E_2_Worst)/(I_Final*Fly_w^2)
+CS_Avg_Final = (Fly_E_1_Avg-Fly_E_2_Avg)/(I_Final*Fly_w^2)
+
+Worst_Speed_Fluctuation = CS_Worst_Final*Fly_w/(2*pi/60) %rpm
+Avg_Speed_Fluctuation = CS_Avg_Final*Fly_w/(2*pi/60) %rpm
+
+
+%Fly_CS_Avg = (Fly_E_1_Avg-Fly_E_2_Avg)/(I(MinMagPosition(1),MinMagPosition(2),MinMagPosition(3),MinMagPosition(4))*Fly_w^2);
 
 %% Graphing
 
