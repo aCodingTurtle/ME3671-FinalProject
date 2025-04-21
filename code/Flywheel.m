@@ -95,6 +95,11 @@ end
 
 %% Spoke Optimization
 
+T = .05; %deceleration/accelertaion time
+
+%T_Spoke = max(TP_Worst)
+T_Spoke = I(MinMagPosition(1),MinMagPosition(2),MinMagPosition(3),MinMagPosition(4))*(Fly_w/T);
+
 %set design space
 d_shaft = .0255; %placeholder value until we talk to dom
 d_hub = .02+d_shaft; %shaft diameter plus flywheel base
@@ -104,8 +109,8 @@ d = .005:.001:b(MinMagPosition(3)); %depth
 N_Spokes = 4:2:10; %number of spokes
 
 %set requirements
-n_bending_min = 2; %minimum allowable failure in bending factor of safety
-n_sheer_min = 2; %minimum allowable failure in sheer factor of safety
+n_bending_min = 5; %minimum allowable failure in bending factor of safety
+n_sheer_min = 5; %minimum allowable failure in sheer factor of safety
 MinMagnitude = 1000000; %initial value to compare against
 
 for i = 1:length(w)
@@ -113,11 +118,11 @@ for i = 1:length(w)
         for k = 1:length(N_Spokes)
             m_spoke(i,j,k) = p(MinMagPosition(4))*w(i)*d(j)*(d_i(MinMagPosition(1))-d_hub);
             m_spokes(i,j,k) = m_spoke(i,j,k)*N_Spokes(k);
-            n_bending(i,j,k) = Sy(MinMagPosition(4))/((max(TP_Worst)/(.5*d_i(MinMagPosition(1)))/N_Spokes(k))/(m_spoke(i,j,k)/12*(w(i)^2+d(j)^2)));
-            n_shear(i,j,k) = Sy(MinMagPosition(4))/sqrt(3*(3*max(TP_Worst)/N_Spokes(k)/(2*w(i)*d(j)))^2);
+            n_bending(i,j,k) = Sy(MinMagPosition(4))/(6*(T_Spoke/N_Spokes(k))/(.5*(d_i(MinMagPosition(1))-d_hub)*w(i)^2));
+            n_shear(i,j,k) = Sy(MinMagPosition(4))/sqrt(3*(3*T_Spoke/(.5*d_i(MinMagPosition(1)))/N_Spokes(k)/(2*w(i)*d(j)))^2);
             Magnitude2(i,j,k) = sqrt(m_spokes(i,j,k)^2+n_bending(i,j,k)^2+n_shear(i,j,k)^2);
             if n_bending(i,j,k) >= n_bending_min && n_shear(i,j,k) >= n_sheer_min && Magnitude2(i,j,k) < MinMagnitude 
-                    MinMagnitude = Magnitude(i,j,k);
+                    MinMagnitude = Magnitude2(i,j,k);
                     MinMagPosition2(1) = i;
                     MinMagPosition2(2) = j;
                     MinMagPosition2(3) = k;
@@ -125,6 +130,30 @@ for i = 1:length(w)
         end
     end
 end
+
+%% Woodrfuff key optimization
+
+Key_w = .0254*[1/8 1/8 1/8 5/32 5/32 5/32]; %standard woodruff key sizing in to mm
+Key_h = .0254*[.203 .25 .313 .25 .313 .375 ]; %standard woodruff key sizing in to mm
+Key_D = .0254*[1/2 5/8 3/4 5/8 3/4 7/8];
+
+n_bending_key_min = 1;
+MinMagnitude = 100000;
+
+for i = 1:length(Key_w)
+        for j = 1:length(p)
+            n_bending_key(i,j) = Sy(j)/(6*(T_Spoke)/(.5*(Key_h(i))*Key_w(i)^2));
+            Magnitude3(i,j) = sqrt(n_bending_key(i,j)^2+Key_w(i)^2);
+            if n_bending(i,j) >= n_bending_key_min && Magnitude3(i,j) < MinMagnitude 
+                    MinMagnitude = Magnitude3(i,j);
+                    MinMagPosition3(1) = i;
+                    MinMagPosition3(2) = j;
+            end
+        end
+end
+
+
+
 
 
 %% Final Calculations
@@ -163,30 +192,41 @@ Avg_Speed_Fluctuation = CS_Avg_Final*Fly_w/(2*pi/60) %rpm
 
 %Flywheel spokes design space
 
-% figure
-% 
-% subplot(1,2,1)
-% grid on
-% hold on
-% for k = 1:length(N_Spokes)
-%     scatter(m_spokes(:,:,k),n_bending(:,:,k),'k')
-% end
-% xlabel('m')
-% ylabel('n_bending')
-% title("Factor of Safety in Bending against Spoke Mass")
-% %xlim([0 1])
-% ylim([0 10^3])
-% hold off
-% 
-% subplot(1,2,2)
-% grid on
-% hold on
-% for k = 1:length(N_Spokes)
-%     scatter(m_spokes(:,:,k),n_shear(:,:,k),'k')
-% end
-% xlabel('m')
-% ylabel('n_bending')
-% title("Factor of Safety in Shear against Spoke Mass")
-% %xlim([0 1])
-% ylim([0 10^3])
-% hold off
+figure
+
+subplot(1,2,1)
+grid on
+hold on
+for k = 1:length(N_Spokes)
+    scatter(m_spokes(:,:,k),n_bending(:,:,k),'k')
+end
+xlabel('m')
+ylabel('n_bending')
+title("Factor of Safety in Bending against Spoke Mass")
+%xlim([0 1])
+ylim([0 50])
+hold off
+
+subplot(1,2,2)
+grid on
+hold on
+for k = 1:length(N_Spokes)
+    scatter(m_spokes(:,:,k),n_shear(:,:,k),'k')
+end
+xlabel('m')
+ylabel('n_bending')
+title("Factor of Safety in Shear against Spoke Mass")
+%xlim([0 1])
+ylim([0 50])
+hold off
+
+%woodruff key plot
+
+figure
+grid on
+hold on
+scatter(Sy(:,:),n_bending_key(:,:),'k')
+xlabel('Material Yield Strength')
+ylabel('n_bending')
+title("Factor of Safety in Shear against Spoke Mass")
+hold off
