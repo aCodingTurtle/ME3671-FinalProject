@@ -139,20 +139,29 @@ Key_D = .0254*[1/2 5/8 3/4 5/8 3/4 7/8];
 
 n_bending_key_min = 1;
 MinMagnitude = 100000;
+Min_T = 10;
+% for i = 1:length(Key_w)
+%         for j = 1:length(p)
+%             n_bending_key(i,j) = Sy(j)/(6*(T_Spoke)/(.5*(Key_h(i))*Key_w(i)^2));
+%             Magnitude3(i,j) = sqrt(n_bending_key(i,j)^2+Key_w(i)^2);
+%             if n_bending(i,j) >= n_bending_key_min && Magnitude3(i,j) < MinMagnitude 
+%                     MinMagnitude = Magnitude3(i,j);
+%                     MinMagPosition3(1) = i;
+%                     MinMagPosition3(2) = j;
+%             end
+%         end
+% end
 
 for i = 1:length(Key_w)
         for j = 1:length(p)
-            n_bending_key(i,j) = Sy(j)/(6*(T_Spoke)/(.5*(Key_h(i))*Key_w(i)^2));
-            Magnitude3(i,j) = sqrt(n_bending_key(i,j)^2+Key_w(i)^2);
-            if n_bending(i,j) >= n_bending_key_min && Magnitude3(i,j) < MinMagnitude 
-                    MinMagnitude = Magnitude3(i,j);
+            T_Failure(i,j) = I(MinMagPosition(1),MinMagPosition(2),MinMagPosition(3),MinMagPosition(4))*(Fly_w)/(Sy(j)/(6*(1)/(.5*(Key_h(i))*Key_w(i)^2))); %failure time in rapid acceleration/deceleration (factor of safety in bending of 1 used)
+            if T_Failure(i,j) < Min_T
+                    Min_T = T_Failure(i,j);
                     MinMagPosition3(1) = i;
                     MinMagPosition3(2) = j;
             end
         end
 end
-
-
 
 
 
@@ -225,8 +234,8 @@ hold off
 figure
 grid on
 hold on
-scatter(Sy(:,:),n_bending_key(:,:),'k')
+scatter(Sy(:,:),T_Failure(:,:),'k')
 xlabel('Material Yield Strength')
-ylabel('n_bending')
-title("Factor of Safety in Shear against Spoke Mass")
+ylabel('Time (s)')
+title("Woodruff Key Time to Full Stop Without Breaking")
 hold off
