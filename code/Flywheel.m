@@ -5,7 +5,7 @@ clc
 
 %input variables
 Fly_k = 68649.71932;  %Spring Constant k (N/m which is 392 lbs/in)
-Fly_w = 5525*2*pi/60; %rad/s using 5525 RPM
+Fly_w = 3250*2*pi/60; %rad/s using 3250 RPM
 [TP_Worst,TP_Avg] = CrankKinematics;
 
 close all
@@ -59,8 +59,8 @@ p = p*1000;
 Sy = Sy*10^6;
 
 
-d_i = .01:.01:.49;
-d_o = .02:.01:.5;
+d_i = .01:.05:.46;
+d_o = .05:.05:.5;
 b = .001:.001:.5;
 
 MinMagnitude = 1000000; %initial value to compare against
@@ -96,11 +96,11 @@ end
 %% Spoke Optimization
 
 %set design space
-d_shaft = .02; %placeholder value until we talk to dom
+d_shaft = .0255; %placeholder value until we talk to dom
 d_hub = .02+d_shaft; %shaft diameter plus flywheel base
 
 w = .005:.001:.05; %width
-d = .005:.005:b(MinMagPosition(3)); %depth
+d = .005:.001:b(MinMagPosition(3)); %depth
 N_Spokes = 4:2:10; %number of spokes
 
 %set requirements
@@ -163,30 +163,30 @@ Avg_Speed_Fluctuation = CS_Avg_Final*Fly_w/(2*pi/60) %rpm
 
 %Flywheel spokes design space
 
-figure
-
-subplot(1,2,1)
-grid on
-hold on
-for k = 1:length(N_Spokes)
-    scatter(m_spokes(:,:,k),n_bending(:,:,k),'k')
-end
-xlabel('m')
-ylabel('n_bending')
-title("Factor of Safety in Bending against Spoke Mass")
-%xlim([0 1])
-ylim([0 10^3])
-hold off
-
-subplot(1,2,2)
-grid on
-hold on
-for k = 1:length(N_Spokes)
-    scatter(m_spokes(:,:,k),n_shear(:,:,k),'k')
-end
-xlabel('m')
-ylabel('n_bending')
-title("Factor of Safety in Shear against Spoke Mass")
-%xlim([0 1])
-ylim([0 10^3])
-hold off
+% figure
+% 
+% subplot(1,2,1)
+% grid on
+% hold on
+% for k = 1:length(N_Spokes)
+%     scatter(m_spokes(:,:,k),n_bending(:,:,k),'k')
+% end
+% xlabel('m')
+% ylabel('n_bending')
+% title("Factor of Safety in Bending against Spoke Mass")
+% %xlim([0 1])
+% ylim([0 10^3])
+% hold off
+% 
+% subplot(1,2,2)
+% grid on
+% hold on
+% for k = 1:length(N_Spokes)
+%     scatter(m_spokes(:,:,k),n_shear(:,:,k),'k')
+% end
+% xlabel('m')
+% ylabel('n_bending')
+% title("Factor of Safety in Shear against Spoke Mass")
+% %xlim([0 1])
+% ylim([0 10^3])
+% hold off
