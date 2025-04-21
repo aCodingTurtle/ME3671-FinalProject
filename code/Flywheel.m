@@ -183,8 +183,8 @@ for i = 1:length(Key_w)
             T_Failure2(i,j) = 2*I_gear2*(Fly_w)/(Sy(j)*Key_h(i)^2); %failure time in rapid acceleration/deceleration (factor of safety in bending of 1 used)
             if T_Failure2(i,j) < Min_T
                     Min_T = T_Failure2(i,j);
-                    MinMagPosition4(1) = i;
-                    MinMagPosition4(2) = j;
+                    MinMagPosition5(1) = i;
+                    MinMagPosition5(2) = j;
             end
         end
 end
