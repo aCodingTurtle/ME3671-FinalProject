@@ -1,5 +1,5 @@
 %% This script regards calculations for shaft forces
-
+clc; clear; close all;
 %% Knowns
 
 g = 9.81;               % Gravity
@@ -8,11 +8,15 @@ g = 9.81;               % Gravity
 % 4340 hot rolled steel Specs Table A-22
 S_y = 910;              % Yeild Strength (MPa)
 S_u = 1041;             % Ultimate Strength (MPa)
+CS_offset = .00762;     % Journal offset (m)
+
+n = 1.5;                % Factor of Safety
 
 % Other Groups
 D_dg = 0;               % Drive Gear Diameter
 D_pg = 0;               % Driven Gear Diameter
 F_gc = 0;               % Gear Contact Force
+F_sp = 1672;            % Spring force on shaft (N)
 m_fw = 2;               % Flywheel Mass(kg)
 m_dg = 0;               % Drive Gear Mass
 m_pg = 0;               % Driven Gear Mass
@@ -29,6 +33,7 @@ T_m = 0;                % Motor torque (N*m)
 T_dg = 0;               % Drive gear torque on shaft (N*m)
 
 
+tao_max = S_y / (2*n);  % Max shear stress(check Ex 5-76)
 
 
 %% Shaft 2 (Driven gear, flywheel, coupling to crankshaft)
@@ -44,7 +49,7 @@ T_cp = 12;              % Max Coupling torque (N*m)
 
 
 %% Shaft 3 (Crank Shaft)
-
-
-
-
+CS_torque = F_sp * CS_offset;
+CS_tao_max = S_y / (2*n);
+% CS_tao = (CS_torque * 16) / (pi* d^3); % Set This and CS_tao_max equal
+d = (CS_torque * 16)*(2*n) / (S_y * (pi))
