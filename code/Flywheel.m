@@ -133,9 +133,9 @@ end
 
 %% Woodrfuff key optimization
 
-Key_w = .0254*[1/8 1/8 1/8 5/32 5/32 5/32]; %standard woodruff key sizing in to mm
-Key_h = .0254*[.203 .25 .313 .25 .313 .375 ]; %standard woodruff key sizing in to mm
-Key_D = .0254*[1/2 5/8 3/4 5/8 3/4 7/8];
+Key_w = .0254*[1/8 1/8 1/8 5/32 5/32 5/32]; %standard woodruff key sizing in to mm  5/32 inch chosen
+Key_h = .0254*[.203 .25 .313 .25 .313 .375 ]; %standard woodruff key sizing in to mm .250 height chosen
+Key_D = .0254*[1/2 5/8 3/4 5/8 3/4 7/8]; %5/8 chosen
 
 Min_T = 10;
 
@@ -150,7 +150,31 @@ for i = 1:length(Key_w)
         end
 end
 
+I_gear1 = 200;
 
+for i = 1:length(Key_w)
+        for j = 1:length(p)
+            T_Failure2(i,j) = 2*I_gear1*(Fly_w)/(Sy(j)*Key_h(i)^2); %failure time in rapid acceleration/deceleration (factor of safety in bending of 1 used)
+            if T_Failure2(i,j) < Min_T
+                    Min_T = T_Failure2(i,j);
+                    MinMagPosition4(1) = i;
+                    MinMagPosition4(2) = j;
+            end
+        end
+end
+
+I_gear2 = 200;
+
+for i = 1:length(Key_w)
+        for j = 1:length(p)
+            T_Failure3(i,j) = 2*I_gear2*(Fly_w)/(Sy(j)*Key_h(i)^2); %failure time in rapid acceleration/deceleration (factor of safety in bending of 1 used)
+            if T_Failure3(i,j) < Min_T
+                    Min_T = T_Failure3(i,j);
+                    MinMagPosition5(1) = i;
+                    MinMagPosition5(2) = j;
+            end
+        end
+end
 
 %% Final Calculations
 m_hub = pi*d(MinMagPosition2(2))*((.5*d_hub)^2-(.5*d_shaft)^2);
@@ -224,5 +248,23 @@ hold on
 scatter(Sy(:,:),T_Failure(:,:),'k')
 xlabel('Material Yield Strength')
 ylabel('Time (s)')
-title("Woodruff Key Time to Full Stop Without Breaking")
+title("Woodruff Key Time to Full Stop Without Breaking (flywheel)")
+hold off
+
+figure
+grid on
+hold on
+scatter(Sy(:,:),T_Failure2(:,:),'k')
+xlabel('Material Yield Strength')
+ylabel('Time (s)')
+title("Woodruff Key Time to Full Stop Without Breaking (gear 1) ")
+hold off
+
+figure
+grid on
+hold on
+scatter(Sy(:,:),T_Failure3(:,:),'k')
+xlabel('Material Yield Strength')
+ylabel('Time (s)')
+title("Woodruff Key Time to Full Stop Without Breaking (gear 2)")
 hold off

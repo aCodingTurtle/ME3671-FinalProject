@@ -1,7 +1,7 @@
 function [TP_2x90,TPT_4x90] = CrankKinematics
 
 %% Crank Kinematics
-clear; clc; close all;
+% clear; clc; close all;
 
 springSetup
 
@@ -24,11 +24,11 @@ beta = abs(90-alpha);
 T = crankR.*Fcr.*cosd(beta); % Torque required by shaft
 pctCRtoTorque = cosd(beta);  % Percent Connecting Rod Force converted to Torque
 
-% % Alternate Method (converting to X and Y axes)
-% Bx = Fs;
-% By = Bx .* tand(phi); % Same as Fwall
-% Bmag = sqrt(Bx.^2 + By.^2); % Same as Fcr
-% TT = crankR.*(Bx.*sind(crankAngle) + By.*cosd(crankAngle)); % Same as T
+% Alternate Method (converting to X and Y axes)
+Bx = Fs;
+By = Bx .* tand(phi); % Same as Fwall
+Bmag = sqrt(Bx.^2 + By.^2); % Same as Fcr
+TT = crankR.*(Bx.*sind(crankAngle) + By.*cosd(crankAngle)); % Same as T
 
 %% Angle Offsets
 Fs90 = circshift(Fs,90); % 90 degree offset spring force
@@ -43,12 +43,54 @@ T90 = circshift(T,90); % torque at 90 degree offset
 T180 = circshift(T,180); % torque at 180 degree offset
 T270 = circshift(T,270); % torque at 270 degree offset
 
-
 %adjusted offset for a 1 degree angular machining tolerance
 T89 = circshift(T,89);  % torque at 89 degree offset
 T1 = circshift(T,1);    % torque at 1 degree offset
 T181 = circshift(T1,180);
 T269 = circshift(T89,180);
+
+%% Force Profiles
+Fby2_90 = By + circshift(By,90); % X forces for two springs
+Fby2_180 = By + circshift(By,180); 
+Fby3 = Fby2_90 + circshift(By,180);
+Fby4 = Fby3 + circshift(By,270);
+figure
+grid on
+plot(crankAngle, By, 'g-', crankAngle, Fby2_90, 'r-', crankAngle, Fby2_180, 'r--', crankAngle, Fby3, 'b-', crankAngle, Fby4, 'k-')
+legend("F_{B1}", "F_{B2 90\circ}", "F_{B2 180\circ}", "F_{B3}", "F_{B4}")
+title("Y Axis Forces")
+xlabel("Crank Angle (degrees)")
+ylabel("Force (N)")
+
+Fbx2_90 = Fs - Fs90;
+Fbx2_180 = Fs + Fs180;
+Fbx3 = Fbx2_90 + Fs180;
+Fbx4 = Fbx3 - Fs270;
+figure
+grid on
+plot(crankAngle, Bx, 'g-', crankAngle, Fbx2_90, 'r-', crankAngle, Fbx2_180, 'r--', crankAngle, Fbx3, 'b-', crankAngle, Fbx4, 'k-')
+legend("F_{B1}", "F_{B2 90\circ}", "F_{B2 180\circ}", "F_{B3}", "F_{B4}")
+title("X Axis Forces (Spring Forces)")
+xlabel("Crank Angle (degrees)")
+ylabel("Force (N)")
+
+FB2_90 = sqrt(Fbx2_90.^2 + Fby2_90.^2);
+FB2_180 = sqrt(Fbx2_180.^2 + Fby2_180.^2);
+FB3 = sqrt(Fbx3.^2 + Fby3.^2);
+FB4 = sqrt(Fbx4.^2 + Fby4.^2);
+figure
+grid on
+plot(crankAngle, Bmag, 'g-', crankAngle, FB2_90, 'r-', crankAngle, FB2_180, 'r--', crankAngle, FB3, 'b-', crankAngle, FB4, 'k-')
+legend("F_{B1}", "F_{B2 90\circ}", "F_{B2 180\circ}", "F_{B3}", "F_{B4}")
+title("Force Magnitudes")
+xlabel("Crank Angle (degrees)")
+ylabel("Force (N)")
+
+FBmax1 = max(Bmag);
+FBmax2_90 = max(FB2_90);
+FBmax2_180 = max(FB2_180);
+FBmax3 = max(FB3);
+FBmax4 = max(FB4);
 
 %% Torque Profiles
 % TorqueProfile (+1deg Tolerance) _ Springs x Offset Angle
@@ -77,7 +119,7 @@ TPT_2x90 = T1 + T89;
 Tmax_2x90 = max(TP_2x90);
 TmaxT_2x90 = max(TPT_2x90);
 
-% TP_1x90 = 1 spring per crank offset, two broken springs
+% TP_1x90 = 1 spring per crank offset, three broken springs
 TP_1x90 = T;
 TPT_1x90 = T1;
 Tmax_1x90 = max(TP_1x90);
@@ -99,7 +141,6 @@ xlabel("Crank Angle (degrees)")
 ylabel("Force (N)")
 title("Forces every Crank Revolution")
 legend("Spring","Connecting Rod", "Wall")
-
 
 % Angle (Connecting Rod to Piston)
 figure
