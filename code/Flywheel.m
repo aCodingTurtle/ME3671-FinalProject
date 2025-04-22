@@ -137,20 +137,7 @@ Key_w = .0254*[1/8 1/8 1/8 5/32 5/32 5/32]; %standard woodruff key sizing in to 
 Key_h = .0254*[.203 .25 .313 .25 .313 .375 ]; %standard woodruff key sizing in to mm
 Key_D = .0254*[1/2 5/8 3/4 5/8 3/4 7/8];
 
-n_bending_key_min = 1;
-MinMagnitude = 100000;
 Min_T = 10;
-% for i = 1:length(Key_w)
-%         for j = 1:length(p)
-%             n_bending_key(i,j) = Sy(j)/(6*(T_Spoke)/(.5*(Key_h(i))*Key_w(i)^2));
-%             Magnitude3(i,j) = sqrt(n_bending_key(i,j)^2+Key_w(i)^2);
-%             if n_bending(i,j) >= n_bending_key_min && Magnitude3(i,j) < MinMagnitude 
-%                     MinMagnitude = Magnitude3(i,j);
-%                     MinMagPosition3(1) = i;
-%                     MinMagPosition3(2) = j;
-%             end
-%         end
-% end
 
 for i = 1:length(Key_w)
         for j = 1:length(p)
@@ -166,7 +153,7 @@ end
 
 
 %% Final Calculations
-m_hub = pi*d(MinMagPosition2(2))*((.5*d_hub)^2-(.5*d_shaft));
+m_hub = pi*d(MinMagPosition2(2))*((.5*d_hub)^2-(.5*d_shaft)^2);
 
 m_final = m(MinMagPosition(1),MinMagPosition(2),MinMagPosition(3),MinMagPosition(4))+m_spokes(MinMagPosition2(1),MinMagPosition2(2),MinMagPosition2(3))+m_hub %final mass of the donut, hub, and spokes
 I_Final = I(MinMagPosition(1),MinMagPosition(2),MinMagPosition(3),MinMagPosition(4))+.5*m_hub*((.5*d_hub)^2+(.5*d_shaft)^2)+(w(MinMagPosition2(1))*d_i(MinMagPosition(1))^3)/12-(w(MinMagPosition2(1))*d_hub^3)/12; %final moment of inertia for fonut, hub, and spokes
