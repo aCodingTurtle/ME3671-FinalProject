@@ -1,45 +1,85 @@
 %% Bearing Loads
-
-% Bearing Names: 
-%   [BB BallBearing or JB JournalBearing]
-%   [Shaft Letter A (Motor - Gearbox), B (Gearbox - Flywheel), C (Crank)]
-%   [Index from End, starting at 1]
-
-% Part Masses
-m_coupler = 1;
-m_gear = 1;
-m_pinion = 1;
-m_outshaft = 1;
-m_flywheel = 1;
-m_crankshaft = 1;
-m_crod = 1;
+clc
+clear
+%Bearing Guide drawing has all distances and bearing numbers indicated
 
 % Gravity (to convert to weight) [m/s^2]
 g = 9.81; 
 
-% Radial Forces [N]
-F_r_cr = 1; % Max radial force seen by bearings in connecting rod
-F_r_gear = 1; % Max radial force seen by gear bearings
+%Linear density of Shaft
+Dens=7850;
+Area=pi*((25e-3)/2)^2;
+LinDens=Dens*Area; %kg/m3
 
-% Dimensions [m]
-A1 = 1; % End to Gear
-A2 = 1; % End to Bearing
-A3 = 1; % End to Motor Coupler
+% Shaft Dimensions [m]
+A1 = 20e-3; 
+A2 = 20e-3; 
 
-B1 = 1; % End to Gear
-B2 = 1; % End to BB_B2
-B3 = 1; % BB_B2 to Flywheel
-B4 = 1; % BB_B2 to BB_B3
-B5 = 1; % BB_B3 to Drive Coupler
-B6 = 1; % BB_B3 to BB_C2
+B1 = 20e-3; 
+B2 = 20e-3; 
+B3 = 20e-3; 
 
-C1 = 1; % End to Middle of Crankshaft
-C2 = 1; % End to BB_C2
+C1 = 30e-3; 
+C2 = 46.55e-3; 
+C3 = 56.55e-3;
 
-% Separating loads to bearings
-F_BB_A0 = (A1/A2)*(m_pinion*g + F_r_gear);
-F_BB_A1 = ((A2-A1)/A2)*(m_pinion*g + F_r_gear) + m_coupler*g;
+% Coupler Mass
+CoupMass=0.7484; %kg
 
-F_BB_B0 = 0;
+%GearMass
+G1M = (1.2488e-4)*7800; %kg
+G2M = (1.5205e-4)*7800; %kg
 
-% Reporting data
+%Gear Force at steady state
+G1F = 27.8649; %N
+G2F = -27.8649; %N
+
+%Connecting Rod Mass
+CRM = Dens*0.00006375; %kg
+
+%Flywheel 
+FM = 2.2427; %kg
+
+
+
+% Shaft A Bearings:
+%Individual Forces [N]
+FA1 = ((CoupMass/2) + (A1*LinDens))*g;
+FA2 = ((A2*LinDens) + G1M)*g + G1F;
+
+%Steady State Bearing forces[N]
+BA2 = FA1 + (FA2/2)
+BA1 = FA2/2
+
+%Shaft B Bearings:
+%individual forces
+FB1 = ((B1*LinDens) + G2M)*g + G2F;
+FB2 = ((B2*LinDens) + FM)*g;
+FB3 = (B3*LinDens + CoupMass/2)*g;
+%Steady State Bearing Forces [N]
+BB1 = FB1/2
+BB2 = FB1/2 + FB2/2
+BB3 = FB2/2 + FB3
+
+%Shaft C Bearings
+%Individual Forces
+FC1 = (CoupMass/2 + C1*LinDens)*g;
+FCW = sqrt(2384.17^2 + ((CRM + C2*LinDens)*g*4)^2);
+FC2 = (CRM + C2*LinDens)*g;
+FC3 = (CRM + C3*LinDens)*g;
+
+%Steady State Bearing Forces [N]
+CC2 = FC1 + FC2/2
+CC1 = FC3/2
+%Worst case scenario bearing forces [N]
+CC2WORST = FC1 + FCW/2
+CC1WORST = FCW/2
+%these forces would only happen for a very brief time if 3 springs broke,
+%in which case the machine would stop. Ensure static load rating of bearing is
+%higher than this force.
+
+
+
+
+
+
