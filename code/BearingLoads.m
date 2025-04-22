@@ -12,16 +12,16 @@ Area=pi*((25e-3)/2)^2;
 LinDens=Dens*Area; %kg/m3
 
 % Shaft Dimensions [m]
-A1 = 20e-3; 
-A2 = 20e-3; 
+A1 = 7e-3; 
+A2 = 37e-3; 
 
-B1 = 20e-3; 
-B2 = 20e-3; 
-B3 = 20e-3; 
+B1 = 37e-3; 
+B2 = 46e-3; 
+B3 = 7e-3; 
 
-C1 = 30e-3; 
-C2 = 46.55e-3; 
-C3 = 56.55e-3;
+C1 = 7e-3; 
+C2 = 47.32e-3; 
+C3 = 47.32e-3;
 
 % Coupler Mass
 CoupMass=0.7484; %kg

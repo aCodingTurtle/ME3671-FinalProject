@@ -21,19 +21,19 @@ LRS=1e6;
 %Ball Bearing design life rating calculations:
 
 %Bearing #A1
-[C10A1] = BallBearing(LifeHours,rpm,LRS,19.0882,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
+[C10A1] = BallBearing(LifeHours,rpm,LRS,19.4096,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
 %Bearing #A2
-[C10A2] = BallBearing(LifeHours,rpm,LRS,23.5152,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
+[C10A2] = BallBearing(LifeHours,rpm,LRS,23.3451,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
 %Bearing #B1
-[C10B1] = BallBearing(LifeHours,rpm,LRS,7.7372,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
+[C10B1] = BallBearing(LifeHours,rpm,LRS,7.4158,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
 %Bearing #B2
-[C10B2] = BallBearing(LifeHours,rpm,LRS,3.6413,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
+[C10B2] = BallBearing(LifeHours,rpm,LRS,4.454,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
 %Bearing #B3
 [C10B3] = BallBearing(LifeHours,rpm,LRS,15.8054,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
 %Bearing #C1
-[C10C1] = BallBearing(LifeHours,rpm,LRS,3.5235,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
+[C10C1] = BallBearing(LifeHours,rpm,LRS,3.349,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
 %Bearing #C2
-[C10C2] = BallBearing(LifeHours,rpm,LRS,8.1394,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
+[C10C2] = BallBearing(LifeHours,rpm,LRS,7.2845,ApplicationFactor,ThetaS,x0S,bS,DesiredReliability)
 
 
 %Needle Bearing Calculation:
