@@ -133,9 +133,9 @@ end
 
 %% Woodrfuff key optimization
 
-Key_w = .0254*[1/8 1/8 1/8 5/32 5/32 5/32]; %standard woodruff key sizing in to mm
-Key_h = .0254*[.203 .25 .313 .25 .313 .375 ]; %standard woodruff key sizing in to mm
-Key_D = .0254*[1/2 5/8 3/4 5/8 3/4 7/8];
+Key_w = .0254*[1/8 1/8 1/8 5/32 5/32 5/32]; %standard woodruff key sizing in to mm  5/32 inch chosen
+Key_h = .0254*[.203 .25 .313 .25 .313 .375 ]; %standard woodruff key sizing in to mm .250 height chosen
+Key_D = .0254*[1/2 5/8 3/4 5/8 3/4 7/8]; %5/8 chosen
 
 n_bending_key_min = 1;
 MinMagnitude = 100000;
@@ -180,9 +180,9 @@ I_gear2 = 200;
 
 for i = 1:length(Key_w)
         for j = 1:length(p)
-            T_Failure2(i,j) = 2*I_gear2*(Fly_w)/(Sy(j)*Key_h(i)^2); %failure time in rapid acceleration/deceleration (factor of safety in bending of 1 used)
-            if T_Failure2(i,j) < Min_T
-                    Min_T = T_Failure2(i,j);
+            T_Failure3(i,j) = 2*I_gear2*(Fly_w)/(Sy(j)*Key_h(i)^2); %failure time in rapid acceleration/deceleration (factor of safety in bending of 1 used)
+            if T_Failure3(i,j) < Min_T
+                    Min_T = T_Failure3(i,j);
                     MinMagPosition5(1) = i;
                     MinMagPosition5(2) = j;
             end

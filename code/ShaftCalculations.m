@@ -14,26 +14,22 @@ S_u = 550;             % Ultimate Strength (MPa)
 S_e = S_u/2;            % Endurance limit (MPa)
 
 % Other Groups
-D_dg = 0;               % Drive Gear Diameter
-D_pg = 0;               % Driven Gear Diameter
-F_gc = 0;               % Gear Contact Force
-m_fw = 2;               % Flywheel Mass(kg)
-m_dg = 0;               % Drive Gear Mass
-m_pg = 0;               % Driven Gear Mass
-GR = 0; %gear ratio
+m_fw = 2.25;               % Flywheel Mass(kg)
+m_dg = 1;               % Drive Gear Mass
+m_pg = 1;               % Driven Gear Mass
+F_gear = 1;      %force transmitted by gears
+GR = 1.1; %gear ratio
 
 
 %% Shaft 1 (Motor and drive gear)
 %assume fully reversed bending 
 Kf = 2.14; %bending fatigue stress conentration factor for woodruff key
 Kfs = 3; %torsional fatigue stress concentration factor for woodruff key
-F_dg = m_dg * g;        % Drive gear force (N)
+F_dg = m_dg * g + F_gear;        % Drive gear force (N)
 F_m = F_dg / 2;         % Vertical motor force (N) 
 F_b1 = F_dg / 2;        % Bearing force (N)
-T_m = 0;                % Motor torque (N*m)
-T_dg = 0;               % Drive gear torque on shaft (N*m)
 
-L1 = 0; %distance from bearing to gear
+L1 = .1; %distance from bearing to gear
 
 M1 = L1*F_b1; %moment at gear
 
@@ -61,13 +57,13 @@ T_pg = 0;               % Pinion gear torque (N*m)
 T_fw = 0;               % Flywheel torque (N*m)
 T_cp = 12.0803;              % Max Coupling torque (N*m)
 
-L1 = 0; %distance from bearing 1 to gear
-L2 = 0; %distance from gear to bearing 2
-L3 = 0; %distance from bearing 2 to flywheel
-L4 = 0; %distance from flywheel to bearing 3
+L1 = .05; %distance from bearing 1 to gear
+L2 = .05; %distance from gear to bearing 2
+L3 = .05; %distance from bearing 2 to flywheel
+L4 = .05; %distance from flywheel to bearing 3
 
 M1 = L1*F_b2; %Bending moment at gear
-M2 = M1+L2*(F_pg+F_dg); %Bending moment at bearing 2
+M2 = M1+L2*(F_pg+F_gear); %Bending moment at bearing 2
 M3 = M2+L3*F_fw; %Bending moment at flywheel
 
 A1 = sqrt(4*((Kf*M1)^2)+3*(Kfs*T_cp)^2); %at gear
